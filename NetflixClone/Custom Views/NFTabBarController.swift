@@ -11,6 +11,7 @@ class NFTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tabBar.tintColor = .label
         viewControllers = [createMainNC(), createUpcomingNC(), createSearchNC(), createDownloadsNC()]
 
     }
