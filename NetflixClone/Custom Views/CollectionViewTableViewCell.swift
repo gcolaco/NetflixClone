@@ -11,6 +11,8 @@ class CollectionViewTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionViewTableViewCell"
     
+    private var titles: [Title] = []
+    
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -18,7 +20,7 @@ class CollectionViewTableViewCell: UITableViewCell {
         layout.scrollDirection = .horizontal
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(TitleCollectionViewCell.self, forCellWithReuseIdentifier: TitleCollectionViewCell.identifier)
         return collectionView
     }()
     
@@ -44,17 +46,26 @@ class CollectionViewTableViewCell: UITableViewCell {
         collectionView.dataSource = self
     }
     
+    func settingData(with titles: [Title]) {
+        self.titles = titles
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.collectionView.reloadData()
+        }
+    }
+    
 }
 
 extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return titles.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = .systemOrange
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TitleCollectionViewCell.identifier, for: indexPath) as? TitleCollectionViewCell else { return UICollectionViewCell()}
+        guard let modelPosterPath = titles[indexPath.row].posterPath else { return UICollectionViewCell() }
+        cell.setData(with: modelPosterPath)
         return cell
     }
     

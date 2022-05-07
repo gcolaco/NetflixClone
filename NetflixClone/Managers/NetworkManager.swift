@@ -27,7 +27,6 @@ class NetworkManager {
                 
                 let results =  try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
-                print(results)
             } catch {
                 completion(.failure(.failedToGetData))
             }
@@ -50,7 +49,6 @@ class NetworkManager {
                 
                 let results =  try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
-                print(results)
             } catch {
                 completion(.failure(.failedToGetData))
             }
