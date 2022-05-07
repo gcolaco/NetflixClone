@@ -1,5 +1,5 @@
 //
-//  TVShow.swift
+//  Movie.swift
 //  NetflixClone
 //
 //  Created by Gustavo Colaço on 07/05/22.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct TrendingTVShow: Decodable {
-    let results: [TVShow]
+struct TrendingTitle: Decodable {
+    let results: [Title]
 }
 
-struct TVShow: Decodable {
+struct Title: Decodable {
     let id: Int
     let mediaType: String?
     let originalLanguage: String?
@@ -22,3 +22,5 @@ struct TVShow: Decodable {
     let voteAverage: Double
     let releaseDate: String?
 }
+
+

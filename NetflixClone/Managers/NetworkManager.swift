@@ -15,7 +15,7 @@ class NetworkManager {
     private let APIKey = "e0912b96eca1c325911471cdac4b7291"
     private let baseURl = "https://api.themoviedb.org/3"
     
-    func getTrendingMovies(completion: @escaping (Result<[Movie], NFError>)-> Void) {
+    func getTrendingMovies(completion: @escaping (Result<[Title], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/trending/movie/day?api_key=\(APIKey)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
@@ -25,7 +25,7 @@ class NetworkManager {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 
-                let results =  try decoder.decode(TrendingMovies.self, from: data)
+                let results =  try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
                 print(results)
             } catch {
@@ -38,7 +38,7 @@ class NetworkManager {
     }
     
     
-    func getTrendingTVShow(completion: @escaping (Result<[TVShow], NFError>)-> Void) {
+    func getTrendingTVShow(completion: @escaping (Result<[Title], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/trending/tv/day?api_key=\(APIKey)") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
@@ -48,7 +48,7 @@ class NetworkManager {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 
-                let results =  try decoder.decode(TrendingTVShow.self, from: data)
+                let results =  try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
                 print(results)
             } catch {
@@ -61,7 +61,7 @@ class NetworkManager {
 
     }
     
-    func getUpcomingMovies(completion: @escaping (Result<[Movie], NFError>)-> Void) {
+    func getUpcomingMovies(completion: @escaping (Result<[Title], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/movie/upcoming?api_key=\(APIKey)&language=en-US&page=1") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
@@ -70,7 +70,7 @@ class NetworkManager {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(TrendingMovies.self, from: data)
+                let results = try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
             } catch {
                 completion(.failure(.failedToGetData))
@@ -81,7 +81,7 @@ class NetworkManager {
         task.resume()
     }
     
-    func getPopularMovies(completion: @escaping (Result<[Movie], NFError>) -> Void) {
+    func getPopularMovies(completion: @escaping (Result<[Title], NFError>) -> Void) {
         guard let url = URL(string: "\(baseURl)/movie/popular?api_key=\(APIKey)&language=en-US&page=1") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
@@ -90,7 +90,7 @@ class NetworkManager {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(TrendingMovies.self, from: data)
+                let results = try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
             } catch {
                 completion(.failure(.failedToGetData))
@@ -100,7 +100,7 @@ class NetworkManager {
         task.resume()
     }
     
-    func getTopRatedMovies(completion: @escaping (Result<[Movie], NFError>) -> Void) {
+    func getTopRatedMovies(completion: @escaping (Result<[Title], NFError>) -> Void) {
         guard let url = URL(string: "\(baseURl)/movie/top_rated?api_key=\(APIKey)&language=en-US&page=1") else { return }
         
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
@@ -109,7 +109,7 @@ class NetworkManager {
             do {
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(TrendingMovies.self, from: data)
+                let results = try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
             } catch {
                 completion(.failure(.failedToGetData))
