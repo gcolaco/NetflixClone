@@ -18,7 +18,7 @@ class NetworkManager {
     func getTrendingMovies(completion: @escaping (Result<[Movie], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/trending/movie/day?api_key=\(APIKey)") else { return }
         
-        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else { return }
             
             do {
@@ -41,7 +41,7 @@ class NetworkManager {
     func getTrendingTVShow(completion: @escaping (Result<[TVShow], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/trending/tv/day?api_key=\(APIKey)") else { return }
         
-        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else { return }
            
             do {
@@ -64,7 +64,7 @@ class NetworkManager {
     func getUpcomingMovies(completion: @escaping (Result<[Movie], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/movie/upcoming?api_key=\(APIKey)&language=en-US&page=1") else { return }
         
-        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
             guard let data = data, error == nil else { return }
             
             do {
@@ -79,7 +79,25 @@ class NetworkManager {
         }
         
         task.resume()
+    }
+    
+    func getTopRatedMovies(completion: @escaping (Result<[Movie], NFError>) -> Void) {
+        guard let url = URL(string: "\(baseURl)/movie/top_rated?api_key=\(APIKey)&language=en-US&page=1") else { return }
         
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let results = try decoder.decode(TrendingMovies.self, from: data)
+                completion(.success(results.results))
+            } catch {
+                completion(.failure(.failedToGetData))
+            }
+        }
+        
+        task.resume()
     }
     
 }
