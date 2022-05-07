@@ -23,6 +23,7 @@ class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureHomeFeedTable()
         configureNavBar()
+        getTrendingMovies()
     }
     
     override func viewDidLayoutSubviews() {
@@ -30,6 +31,17 @@ class HomeViewController: UIViewController {
         homeFeedTable.frame = view.bounds
     }
     
+    
+    private func getTrendingMovies() {
+        NetworkManager.shared.getTrendingMovies { result in
+            switch result {
+            case .success(let movies):
+                print(movies)
+            case .failure:
+                print("error")
+            }
+        }
+    }
     
     private func configureNavBar() {
         var image = UIImage(named: "netflix")
