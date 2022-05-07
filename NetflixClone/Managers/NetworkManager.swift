@@ -16,7 +16,7 @@ class NetworkManager {
     private let baseURl = "https://api.themoviedb.org/"
     
     func getTrendingMovies(completion: @escaping (Result<[Movie], NFError>)-> Void) {
-        guard let url = URL(string: "\(baseURl)/3/trending/all/day?api_key=\(APIKey)") else { return }
+        guard let url = URL(string: "\(baseURl)/3/trending/movie/day?api_key=\(APIKey)") else { return }
         
         let task = URLSession.shared.dataTask(with: url) { data, _, error in
             guard let data = data, error == nil else {
