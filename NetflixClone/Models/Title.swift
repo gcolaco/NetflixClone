@@ -14,6 +14,7 @@ struct TrendingTitle: Decodable {
 struct Title: Decodable {
     let id: Int
     let mediaType: String?
+    let title: String?
     let originalLanguage: String?
     let originalTitle: String?
     let posterPath: String?
