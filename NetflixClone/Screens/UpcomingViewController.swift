@@ -61,12 +61,12 @@ extension UpcomingViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleTableViewCell.identifier, for: indexPath) as? TitleTableViewCell else { return UITableViewCell() }
         
         let title = titles[indexPath.row]
-        cell.setData(with: TitleViewModel(titleName: title.title ?? title.originalTitle ?? "Unknow", posterURL: title.posterPath ?? ""))
+        cell.setData(with: TitleViewModel(titleName: title.title ?? title.originalTitle ?? "Unable to fetch title", posterURL: title.posterPath ?? ""))
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 120
+        return 140
     }
     
     

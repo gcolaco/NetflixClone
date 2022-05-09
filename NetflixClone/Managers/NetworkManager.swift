@@ -116,5 +116,24 @@ class NetworkManager {
         
         task.resume()
     }
-    
+        
+    func getDiscoverMovies(completion: @escaping (Result<[Title], NFError>) -> Void) {
+        guard let url = URL(string: "\(baseURl)/discover/movie?api_key=\(APIKey)&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=1&with_watch_monetization_types=flatrate") else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let results  = try decoder.decode(TrendingTitle.self, from: data)
+                completion(.success(results.results))
+            } catch {
+                completion(.failure(.failedToGetData))
+            }
+
+        }
+        
+        task.resume()
+    }
 }

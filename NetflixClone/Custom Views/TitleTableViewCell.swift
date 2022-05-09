@@ -52,8 +52,8 @@ class TitleTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             posterImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            posterImageView.topAnchor.constraint(equalTo: topAnchor, constant: 15),
-            posterImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
+            posterImageView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            posterImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
             posterImageView.widthAnchor.constraint(equalToConstant: 100),
             
             titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 20),
