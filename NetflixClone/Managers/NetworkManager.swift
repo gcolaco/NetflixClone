@@ -136,4 +136,28 @@ class NetworkManager {
         
         task.resume()
     }
+    
+    func search(with query: String, completion: @escaping (Result<[Title], NFError>) -> Void) {
+        
+        guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else { return }
+        
+        guard let url = URL(string: "\(baseURl)/search/movie?api_key=\(APIKey)&query=\(query)") else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let results  = try decoder.decode(TrendingTitle.self, from: data)
+                completion(.success(results.results))
+            } catch {
+                completion(.failure(.failedToGetData))
+            }
+
+        }
+        
+        task.resume()
+    }
+    
 }
