@@ -7,12 +7,17 @@
 
 import UIKit
 
+protocol CollectionViewTableViewCellDelegate: AnyObject {
+    func collectionViewTableViewCellDidTapCell(_ cell: CollectionViewTableViewCell, viewModel: YoutubeSearchViewModel)
+}
+
 class CollectionViewTableViewCell: UITableViewCell {
     
     static let identifier = "CollectionViewTableViewCell"
     
     private var titles: [Title] = []
     
+    weak var delegate: CollectionViewTableViewCellDelegate?
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -73,10 +78,13 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
         collectionView.deselectItem(at: indexPath, animated: true)
         guard let titleName = titles[indexPath.row].title ?? titles[indexPath.row].originalTitle else { return }
         
-        NetworkManager.shared.getMovie(with: titleName + " trailer") { result in
+        NetworkManager.shared.getMovie(with: titleName + " trailer") { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let video):
-                print(video.id)
+                let selectedTitle = self.titles[indexPath.row]
+                let viewModel = YoutubeSearchViewModel(title: titleName, youtubeVideo: video, titleOverView: selectedTitle.overview ?? "Unable to fetch description. Please try again later.")
+                self.delegate?.collectionViewTableViewCellDidTapCell(self, viewModel: viewModel)
             case .failure(let error):
                 print(error)
             }
