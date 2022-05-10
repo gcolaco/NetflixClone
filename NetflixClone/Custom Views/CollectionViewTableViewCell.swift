@@ -69,6 +69,21 @@ extension CollectionViewTableViewCell: UICollectionViewDelegate, UICollectionVie
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let titleName = titles[indexPath.row].title ?? titles[indexPath.row].originalTitle else { return }
+        
+        NetworkManager.shared.getMovie(with: titleName + " trailer") { result in
+            switch result {
+            case .success(let video):
+                print(video.id)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    
 }
 
 

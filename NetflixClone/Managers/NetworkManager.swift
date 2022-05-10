@@ -14,6 +14,8 @@ class NetworkManager {
     
     private let APIKey = "e0912b96eca1c325911471cdac4b7291"
     private let baseURl = "https://api.themoviedb.org/3"
+    private let youtubeAPIKey = "AIzaSyBd7L_scDPvuupJYPyhGrLpJR2XoylgsDY"
+    private let youtubeBaseURL = "https://youtube.googleapis.com/youtube/v3/search?"
     
     func getTrendingMovies(completion: @escaping (Result<[Title], NFError>)-> Void) {
         guard let url = URL(string: "\(baseURl)/trending/movie/day?api_key=\(APIKey)") else { return }
@@ -151,6 +153,27 @@ class NetworkManager {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 let results  = try decoder.decode(TrendingTitle.self, from: data)
                 completion(.success(results.results))
+            } catch {
+                completion(.failure(.failedToGetData))
+            }
+
+        }
+        
+        task.resume()
+    }
+    
+    
+    func getMovie(with query: String, completion: @escaping (Result<VideoElement, NFError>) -> Void) {
+        guard let query = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else { return }
+        guard let url = URL(string: "\(youtubeBaseURL)q=\(query)&key=\(youtubeAPIKey)") else { return }
+        
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let decoder = JSONDecoder()
+                let results = try decoder.decode(YoutubeSearchModel.self, from: data)
+                completion(.success(results.items[0]))
             } catch {
                 completion(.failure(.failedToGetData))
             }
