@@ -17,6 +17,9 @@ enum Sections: Int {
 
 class HomeViewController: UIViewController {
     
+    private var randomTrendingMovie: Title?
+    private var featuredHeaderView: HomeFeaturedHeaderView?
+    
     private let sectionTitles: [String] = ["Trending Movies", "Trending Tv", "Popular", "Upcoming movies", "Top rated"]
     
     private let homeFeedTable: UITableView = {
@@ -57,8 +60,24 @@ class HomeViewController: UIViewController {
         homeFeedTable.delegate = self
         homeFeedTable.dataSource = self
         
-        let headerView = HomeFeaturedHeaderView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 400))
-        homeFeedTable.tableHeaderView = headerView
+        featuredHeaderView = HomeFeaturedHeaderView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 400))
+        homeFeedTable.tableHeaderView = featuredHeaderView
+        configureFeaturedHeaderView()
+    }
+    
+    
+    private func configureFeaturedHeaderView() {
+        NetworkManager.shared.getTrendingMovies { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let titles):
+                let selectedTitle = titles.randomElement()
+                self.randomTrendingMovie = selectedTitle
+                self.featuredHeaderView?.configure(with: TitleViewModel(titleName: selectedTitle?.title ?? "Unable to fetch title.", posterURL: selectedTitle?.posterPath ?? ""))
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 
 }
