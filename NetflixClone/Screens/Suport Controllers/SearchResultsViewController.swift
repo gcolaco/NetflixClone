@@ -7,9 +7,15 @@
 
 import UIKit
 
+protocol SearchResultsViewControllerDelegate: AnyObject {
+    func searchResultsViewControllerDidTapItem(_ viewModel: YoutubeSearchViewModel)
+}
+
 class SearchResultsViewController: UIViewController {
     
     var titles: [Title] = []
+    
+    weak var delegate: SearchResultsViewControllerDelegate?
     
     let searchResultsCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -53,5 +59,22 @@ extension SearchResultsViewController: UICollectionViewDelegate, UICollectionVie
         return cell
     }
     
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        
+        let title = titles[indexPath.row]
+        guard let titleName = title.title ?? title.originalTitle else { return }
+        
+        NetworkManager.shared.getMovie(with: titleName) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let video):
+                self.delegate?.searchResultsViewControllerDidTapItem(YoutubeSearchViewModel(title: titleName, youtubeVideo: video, titleOverView: title.overview ?? "Unable to fetch description. Please try again later."))
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
     
 }

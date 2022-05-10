@@ -84,13 +84,39 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 140
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let title = titles[indexPath.row]
+        
+        guard let titleName = title.title ?? title.originalTitle else { return }
+        
+        NetworkManager.shared.getMovie(with: titleName) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let video):
+                DispatchQueue.main.async {
+                    let vc = TitlePreviewViewController()
+                    vc.configure(with: YoutubeSearchViewModel(title: titleName, youtubeVideo: video, titleOverView: title.overview ?? "Unable to fetch description. Please try again later."))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
+    }
+    
 }
 
-extension SearchViewController: UISearchResultsUpdating {
+extension SearchViewController: UISearchResultsUpdating, SearchResultsViewControllerDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         let searchBar = searchController.searchBar
         
         guard let query = searchBar.text, !query.trimmingCharacters(in: .whitespaces).isEmpty, query.trimmingCharacters(in: .whitespaces).count >= 3, let resultsController = searchController.searchResultsController as? SearchResultsViewController else  { return }
+        
+        resultsController.delegate = self
         
         NetworkManager.shared.search(with: query) { result in
             DispatchQueue.main.async {
@@ -103,6 +129,15 @@ extension SearchViewController: UISearchResultsUpdating {
                 }
             }
         }
-        
     }
+    
+    
+    func searchResultsViewControllerDidTapItem(_ viewModel: YoutubeSearchViewModel) {
+        DispatchQueue.main.async { [weak self] in
+            let vc = TitlePreviewViewController()
+            vc.configure(with: viewModel)
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
 }
