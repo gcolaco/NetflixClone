@@ -23,6 +23,7 @@ class DownloadsViewController: UIViewController {
         title = "Downloads"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationItem.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.tintColor = .white
         view.addSubview(downloadedTable)
         downloadedTable.delegate = self
         downloadedTable.dataSource = self
@@ -90,6 +91,29 @@ extension DownloadsViewController: UITableViewDelegate, UITableViewDataSource {
         default:
             break
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let title = titles[indexPath.row]
+        
+        guard let titleName = title.title ?? title.originalTitle else { return }
+        
+        NetworkManager.shared.getMovie(with: titleName) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let video):
+                DispatchQueue.main.async {
+                    let vc = TitlePreviewViewController()
+                    vc.configure(with: YoutubeSearchViewModel(title: titleName, youtubeVideo: video, titleOverView: title.overview ?? "Unable to fetch description. Please try again later."))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
     }
     
     
