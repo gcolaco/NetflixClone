@@ -47,8 +47,8 @@ class TitleTableViewCell: UITableViewCell {
     
     private func configureCellUI() {
         contentView.addSubview(posterImageView)
-        contentView.addSubview(titleLabel)
         contentView.addSubview(playTitleButton)
+        contentView.addSubview(titleLabel)
         
         NSLayoutConstraint.activate([
             posterImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -56,11 +56,17 @@ class TitleTableViewCell: UITableViewCell {
             posterImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
             posterImageView.widthAnchor.constraint(equalToConstant: 100),
             
-            titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 20),
-            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            
             playTitleButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             playTitleButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            playTitleButton.widthAnchor.constraint(equalToConstant: 40),
+            playTitleButton.heightAnchor.constraint(equalToConstant: 40),
+            
+            titleLabel.leadingAnchor.constraint(equalTo: posterImageView.trailingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: playTitleButton.leadingAnchor, constant: -8),
+            
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+
             
         ])
     }
